@@ -54,6 +54,7 @@ class TransactionController extends Controller
                         'qty' => $item['qty'],
                         'price' => $item['price']
                     ]);
+                    Product::where('id',$item['id'])->decrement('qty',$item['qty']);
                 }
             });
             return response()->json(['success','Pembayaran berhasil']);
