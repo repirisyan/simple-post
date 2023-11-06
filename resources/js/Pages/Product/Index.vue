@@ -1,8 +1,9 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, usePage, Link } from "@inertiajs/vue3";
-import { ref, inject } from "vue";
+import { ref, inject,onMounted } from "vue";
 import QrcodeVue from "qrcode.vue";
+import QRCode from 'qrcode'
 
 const swal = inject("$swal");
 
@@ -26,6 +27,20 @@ const modalUbah = ref();
 const product_id = ref();
 
 const loading = ref(false);
+
+function downloadURI(dataUrl, fileName) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = fileName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+const download = async (id,nama) => {
+    return downloadURI(await QRCode.toDataURL(route('product.edit',id)),nama+'.png');
+}
 
 const store = () => {
     form.post(route("product.store"), {
@@ -179,6 +194,12 @@ const destroy = (id) => {
                                         />
                                     </td>
                                     <td>
+                                        <button @click="download(product.id,product.nama)"
+                                            class="btn btn-sm btn-info"
+                                        >
+                                            Download
+                                        </button>
+                                        &nbsp;
                                         <button
                                             @click="edit(product.id)"
                                             onclick="modalUbah.showModal()"
