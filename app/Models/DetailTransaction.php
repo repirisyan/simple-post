@@ -14,4 +14,8 @@ class DetailTransaction extends Model
     public function transaction(){
         return $this->belongsTo(DetailTransaction::class);
     }
+
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
 }

@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { ref, inject } from "vue";
 
 const swal = inject("$swal");
@@ -117,7 +118,7 @@ const destroy = (id) => {
                         class="btn btn-sm"
                         onclick="modalTambah.showModal()"
                     >
-                        Tambah
+                        Tambah <PlusIcon class="h-4 w-4" />
                     </button>
                     <div class="overflow-x-auto">
                         <table class="table">
@@ -140,13 +141,13 @@ const destroy = (id) => {
                                             onclick="modalUbah.showModal()"
                                             class="btn btn-sm btn-warning"
                                         >
-                                            Ubah
+                                            Ubah <PencilSquareIcon class="w-4 h-4" />
                                         </button>
                                         <button
                                             @click="destroy(item.id)"
                                             class="btn btn-sm btn-error"
                                         >
-                                            Hapus
+                                            Hapus <TrashIcon class="w-4 h-4" />
                                         </button>
                                     </td>
                                 </tr>

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('product_code')->unique();
             $table->string('nama');
             $table->unsignedInteger('qty');
-            $table->unsignedInteger('price');
+            $table->unsignedInteger('buying_price');
+            $table->unsignedInteger('selling_price');
             $table->timestamps();
         });
     }

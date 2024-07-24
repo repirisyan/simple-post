@@ -1,23 +1,63 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, Link } from "@inertiajs/vue3";
+import { FunnelIcon, PrinterIcon } from '@heroicons/vue/24/outline'
 import moment from "moment";
+import axios from "axios";
+import { ref } from "vue";
 
 const props = defineProps({
     histories: Object,
 });
 
 const formFilter = useForm({
-    date: ""
-})
+    from_date: "",
+    until_date: "",
+});
 
-const filter = () => {
-    formFilter.get(route("transaction.history"), {
-        replace: true,
-        preserveState: true,
-    });
+const detail_transactions = ref([]);
+const modalDetail = ref(false);
+const loading = ref(false);
+
+const printTransaction = () => {
+    if(formFilter.from_date == "" || formFilter.until_date == ""){
+        alert("Harap isi tanggal terlebih dahulu")
+    }else{
+        formFilter.get(route('transaction.print'),{
+            preserveState: true, 
+        })
+    }
+}
+
+const calculateTotal = (transactions) => {
+    return transactions.reduce((acc, item) => {
+        return acc + (item.price - item.buying_price) * item.qty;
+    }, 0);
 };
 
+const formatTotal = (transactions) => {
+    const total = calculateTotal(transactions);
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+    }).format(total);
+};
+
+const getDetailTransaction = (id) => {
+    modalDetail.value.showModal();
+    loading.value = true;
+    axios
+        .get(route("transaction.detail", id))
+        .then((response) => {
+            detail_transactions.value = response.data;
+        })
+        .catch((response) => {
+            console.log(response);
+        })
+        .finally(() => {
+            loading.value = false;
+        });
+};
 </script>
 
 <template>
@@ -38,18 +78,31 @@ const filter = () => {
                     class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg"
                 >
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <form @submit.prevent="filter">
+                        <div class="flex justify-between">
+                            <form @submit.prevent="filter">
                             <div class="join">
                                 <input
                                     type="date"
-                                    v-model.lazy="formFilter.date"
+                                    v-model.lazy="formFilter.from_date"
                                     class="input input-bordered join-item"
                                 />
-                                <button type="submit" class="btn join-item rounded-r-full">
-                                    Filter
+
+                                <input
+                                    type="date"
+                                    v-model.lazy="formFilter.until_date"
+                                    class="input input-bordered join-item"
+                                />
+                                <button
+                                    :disabled="formFilter.processing"
+                                    type="submit"
+                                    class="btn join-item rounded-r-full"
+                                >
+                                    Filter <FunnelIcon class="w-4 h-4" />
                                 </button>
                             </div>
                         </form>
+                        <a target="_blank" :href="route('transaction.print')+`?from_date=${formFilter.from_date}&until_date=${formFilter.until_date}`"  class="btn btn-sm btn-success">Print <PrinterIcon class="w-4 h-4" /></a>
+                        </div>
                         <div class="overflow-x-auto">
                             <table class="table">
                                 <!-- head -->
@@ -60,6 +113,7 @@ const filter = () => {
                                         <th>Total Pembelian</th>
                                         <th>Bayar</th>
                                         <th>Kembalian</th>
+                                        <th>Laba</th>
                                     </tr>
                                 </thead>
                                 <tbody
@@ -75,7 +129,18 @@ const filter = () => {
                                         v-for="history in props.histories.data"
                                         :key="history.id"
                                     >
-                                        <td>{{ history.invoice }}</td>
+                                        <td>
+                                            <a
+                                                href="javascript:;"
+                                                class="hover:text-blue-500"
+                                                @click="
+                                                    getDetailTransaction(
+                                                        history.id,
+                                                    )
+                                                "
+                                                >{{ history.invoice }}</a
+                                            >
+                                        </td>
                                         <td>
                                             {{
                                                 moment(history.created_at)
@@ -107,6 +172,13 @@ const filter = () => {
                                                 }).format(
                                                     history.grand_pay -
                                                         history.grand_total,
+                                                )
+                                            }}
+                                        </td>
+                                        <td>
+                                            {{
+                                                formatTotal(
+                                                    history.detail_transaction,
                                                 )
                                             }}
                                         </td>
@@ -143,5 +215,73 @@ const filter = () => {
                 </div>
             </div>
         </div>
+
+        <dialog id="modalDetail" class="modal" ref="modalDetail">
+            <div class="modal-box">
+                <h3 class="text-lg font-bold">Detail Transaksi</h3>
+                <div class="py-4">
+                    <table class="table" v-if="!loading">
+                        <thead>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <th>QTY</th>
+                                <th>Harga Beli</th>
+                                <th>Harga Jual</th>
+                                <th>Laba</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="item in detail_transactions"
+                                :key="item.id"
+                            >
+                                <td>
+                                    {{ item.product.nama }}
+                                </td>
+                                <td>
+                                    {{ item.qty }}
+                                </td>
+                                <td>
+                                    {{
+                                        new Intl.NumberFormat("id-ID", {
+                                            style: "currency",
+                                            currency: "IDR",
+                                        }).format(item.buying_price)
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        new Intl.NumberFormat("id-ID", {
+                                            style: "currency",
+                                            currency: "IDR",
+                                        }).format(item.price)
+                                    }}
+                                </td>
+                                <td>
+                                    {{
+                                        new Intl.NumberFormat("id-ID", {
+                                            style: "currency",
+                                            currency: "IDR",
+                                        }).format(
+                                            (item.price - item.buying_price) *
+                                                item.qty,
+                                        )
+                                    }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-center" v-else>
+                        <span class="loading loading-spinner loading-sm"></span>
+                    </p>
+                </div>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <!-- if there is a button in form, it will close the modal -->
+                        <button class="btn btn-sm">Tutup</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
     </AuthenticatedLayout>
 </template>

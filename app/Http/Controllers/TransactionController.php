@@ -52,6 +52,7 @@ class TransactionController extends Controller
                         'product_id' => $item['id'],
                         'transaction_id' => $id,
                         'qty' => $item['qty'],
+                        'buying_price' => $item['buying_price'],
                         'price' => $item['price']
                     ]);
                     Product::where('id',$item['id'])->decrement('qty',$item['qty']);

@@ -1,9 +1,10 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, usePage, Link } from "@inertiajs/vue3";
-import { ref, inject,onMounted } from "vue";
+import { ref, inject } from "vue";
+import { PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownOnSquareIcon } from '@heroicons/vue/24/outline'
 import QrcodeVue from "qrcode.vue";
-import QRCode from 'qrcode'
+import QRCode from "qrcode";
 
 const swal = inject("$swal");
 
@@ -19,28 +20,30 @@ const form = useForm({
     product_code: "",
     nama: "",
     qty: "",
-    price: "",
+    buying_price: "",
+    selling_price: "",
 });
 
 const modal = ref();
 const modalUbah = ref();
 const product_id = ref();
 
-const loading = ref(false);
-
 function downloadURI(dataUrl, fileName) {
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = fileName;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-const download = async (id,nama) => {
-    return downloadURI(await QRCode.toDataURL(route('product.edit',id)),nama+'.png');
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = fileName;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
+
+const download = async (id, nama) => {
+    return downloadURI(
+        await QRCode.toDataURL(route("product.edit", id)),
+        nama + ".png",
+    );
+};
 
 const store = () => {
     form.post(route("product.store"), {
@@ -67,7 +70,8 @@ const edit = async (id) => {
             form.nama = res.data.nama;
             form.category_product_id = res.data.category_product_id;
             form.qty = res.data.qty;
-            form.price = res.data.price;
+            form.selling_price = res.data.selling_price;
+            form.buying_price = res.data.buying_price;
             product_id.value = id;
         })
         .catch((res) => {
@@ -141,7 +145,7 @@ const destroy = (id) => {
                         class="btn btn-sm"
                         onclick="modalTambah.showModal()"
                     >
-                        Tambah
+                        Tambah <PlusIcon class="w-4 h-4" />
                     </button>
                     <div class="overflow-x-auto">
                         <table class="table">
@@ -152,7 +156,8 @@ const destroy = (id) => {
                                     <th>Nama</th>
                                     <th>Kategori</th>
                                     <th>Qty</th>
-                                    <th>Harga</th>
+                                    <th>Harga Beli</th>
+                                    <th>Harga Jual</th>
                                     <th>QR</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -179,7 +184,15 @@ const destroy = (id) => {
                                             new Intl.NumberFormat("id-ID", {
                                                 style: "currency",
                                                 currency: "IDR",
-                                            }).format(product.price)
+                                            }).format(product.buying_price)
+                                        }}
+                                    </td>
+                                    <td>
+                                        {{
+                                            new Intl.NumberFormat("id-ID", {
+                                                style: "currency",
+                                                currency: "IDR",
+                                            }).format(product.selling_price)
                                         }}
                                     </td>
                                     <td>
@@ -194,10 +207,16 @@ const destroy = (id) => {
                                         />
                                     </td>
                                     <td>
-                                        <button @click="download(product.id,product.nama)"
+                                        <button
+                                            @click="
+                                                download(
+                                                    product.id,
+                                                    product.nama,
+                                                )
+                                            "
                                             class="btn btn-sm btn-info"
                                         >
-                                            Download
+                                            Download <ArrowDownOnSquareIcon class="w-4 h-4" />
                                         </button>
                                         &nbsp;
                                         <button
@@ -205,21 +224,21 @@ const destroy = (id) => {
                                             onclick="modalUbah.showModal()"
                                             class="btn btn-sm btn-warning"
                                         >
-                                            Ubah
+                                            Ubah <PencilSquareIcon class="w-4 h-4" />
                                         </button>
                                         &nbsp;
                                         <button
                                             @click="destroy(product.id)"
                                             class="btn btn-sm btn-error"
                                         >
-                                            Hapus
+                                            Hapus <TrashIcon class="w-4 h-4" />
                                         </button>
                                     </td>
                                 </tr>
                             </tbody>
                             <tbody v-else>
                                 <tr class="text-center">
-                                    <td colspan="5">Tidak ada data</td>
+                                    <td colspan="8">Tidak ada data</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -358,24 +377,51 @@ const destroy = (id) => {
                         </div>
                         <div class="form-control w-full">
                             <label class="label">
-                                <span class="label-text">Harga</span>
+                                <span class="label-text">Harga Beli</span>
                             </label>
                             <input
                                 type="number"
                                 min="0"
                                 required
-                                v-model.lazy="form.price"
+                                v-model.lazy="form.buying_price"
                                 placeholder="Type here"
                                 :class="`input input-bordered w-full ${
-                                    form.errors.price ? 'input-error' : ''
+                                    form.errors.buying_price
+                                        ? 'input-error'
+                                        : ''
                                 } `"
                                 :readonly="form.processing"
                             />
                             <label class="label">
                                 <span
                                     class="label-text-alt text-error"
-                                    v-if="form.errors.price"
-                                    >{{ form.errors.price }}</span
+                                    v-if="form.errors.buying_price"
+                                    >{{ form.errors.buying_price }}</span
+                                >
+                            </label>
+                        </div>
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Harga Jual</span>
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                required
+                                v-model.lazy="form.selling_price"
+                                placeholder="Type here"
+                                :class="`input input-bordered w-full ${
+                                    form.errors.selling_price
+                                        ? 'input-error'
+                                        : ''
+                                } `"
+                                :readonly="form.processing"
+                            />
+                            <label class="label">
+                                <span
+                                    class="label-text-alt text-error"
+                                    v-if="form.errors.selling_price"
+                                    >{{ form.errors.selling_price }}</span
                                 >
                             </label>
                         </div>
@@ -520,24 +566,51 @@ const destroy = (id) => {
                         </div>
                         <div class="form-control w-full">
                             <label class="label">
-                                <span class="label-text">Harga</span>
+                                <span class="label-text">Harga Beli</span>
                             </label>
                             <input
                                 type="number"
                                 min="0"
                                 required
-                                v-model.lazy="form.price"
+                                v-model.lazy="form.buying_price"
                                 placeholder="Type here"
                                 :class="`input input-bordered w-full ${
-                                    form.errors.price ? 'input-error' : ''
+                                    form.errors.buying_price
+                                        ? 'input-error'
+                                        : ''
                                 } `"
                                 :readonly="form.processing"
                             />
                             <label class="label">
                                 <span
                                     class="label-text-alt text-error"
-                                    v-if="form.errors.price"
-                                    >{{ form.errors.price }}</span
+                                    v-if="form.errors.buying_price"
+                                    >{{ form.errors.buying_price }}</span
+                                >
+                            </label>
+                        </div>
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Harga Jual</span>
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                required
+                                v-model.lazy="form.selling_price"
+                                placeholder="Type here"
+                                :class="`input input-bordered w-full ${
+                                    form.errors.selling_price
+                                        ? 'input-error'
+                                        : ''
+                                } `"
+                                :readonly="form.processing"
+                            />
+                            <label class="label">
+                                <span
+                                    class="label-text-alt text-error"
+                                    v-if="form.errors.selling_price"
+                                    >{{ form.errors.selling_price }}</span
                                 >
                             </label>
                         </div>

@@ -1,8 +1,9 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm, usePage, router } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import { ref, inject } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
+import { PlusIcon, CreditCardIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     products: Object,
@@ -16,11 +17,9 @@ const swal = inject("$swal");
 
 const form = useForm({});
 
-const total_pembayaran = ref(0);
 const bayar = ref(0);
 const grandtotal = ref(0);
 const detail_products = ref([]);
-const result = ref("");
 const error = ref("");
 
 const loading = ref(false);
@@ -73,7 +72,8 @@ function onDetect(detectedCodes) {
             detail_products.value.push({
                 id: response.data.id,
                 nama: response.data.nama,
-                price: response.data.price,
+                price: response.data.selling_price,
+                buying_price: response.data.buying_price,
                 qty: 1,
             });
         }
@@ -94,7 +94,8 @@ const searchProduct = async () => {
                 detail_products.value.push({
                     id: response.data.id,
                     nama: response.data.nama,
-                    price: response.data.price,
+                    price: response.data.selling_price,
+                    buying_price: response.data.buying_price,
                     qty: 1,
                 });
             }
@@ -188,7 +189,7 @@ const pay = async () => {
                                         type="submit"
                                         class="btn join-item"
                                     >
-                                        Tambah
+                                        Tambah <PlusIcon class="w-4 h-4" />
                                     </button>
                                 </div>
                                 <label class="label">
@@ -347,7 +348,7 @@ const pay = async () => {
                                     class="btn btn-success max-w-xs mt-5"
                                     @click="pay"
                                 >
-                                    Bayar
+                                    Bayar <CreditCardIcon class="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
