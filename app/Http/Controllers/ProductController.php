@@ -29,6 +29,12 @@ class ProductController extends Controller
         ]);
     }
 
+    public function productLink($id){
+        return Inertia::render('Product/Detail',[
+            'product' => $this->product->getProduct($id)
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

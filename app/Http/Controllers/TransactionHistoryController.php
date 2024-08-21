@@ -14,7 +14,8 @@ class TransactionHistoryController extends Controller
         return Inertia::render('TransactionHistory/Index',[
             'histories' => Transaction::with('detail_transaction')->when($request->query('from_date') != null && $request->query('until_date') != null, function($query) use ($request){
                 $query->whereBetween('created_at',[$request->query('from_date'),$request->query('until_date')]);
-            })->simplePaginate(10)
+            })->simplePaginate(10),
+            'params' => $request->all()
         ]);
     }
 

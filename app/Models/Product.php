@@ -28,7 +28,7 @@ class Product extends Model
     }
 
     public function getProduct($id){
-        return $this->where('id',$id)->first();
+        return $this->with('category_product')->where('id',$id)->first();
     }
 
     public function updateProduct($id,$data){

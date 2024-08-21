@@ -32,6 +32,8 @@ use Inertia\Inertia;
 
 Route::redirect('/','login');
 
+Route::get('product-link/{id}',[ProductController::class,'productLink'])->name('product.link');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 

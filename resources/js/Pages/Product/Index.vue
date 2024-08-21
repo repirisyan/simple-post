@@ -2,7 +2,12 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, usePage, Link } from "@inertiajs/vue3";
 import { ref, inject } from "vue";
-import { PlusIcon, PencilSquareIcon, TrashIcon, ArrowDownOnSquareIcon } from '@heroicons/vue/24/outline'
+import {
+    PlusIcon,
+    PencilSquareIcon,
+    TrashIcon,
+    ArrowDownOnSquareIcon,
+} from "@heroicons/vue/24/outline";
 import QrcodeVue from "qrcode.vue";
 import QRCode from "qrcode";
 
@@ -159,6 +164,7 @@ const destroy = (id) => {
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
                                     <th>QR</th>
+                                    <th>QR Link</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -199,6 +205,17 @@ const destroy = (id) => {
                                         <QrcodeVue
                                             :value="
                                                 route(
+                                                    'product.link',
+                                                    product.id,
+                                                )
+                                            "
+                                            :size="100"
+                                        />
+                                    </td>
+                                    <td>
+                                        <QrcodeVue
+                                            :value="
+                                                route(
                                                     'product.edit',
                                                     product.id,
                                                 )
@@ -216,7 +233,10 @@ const destroy = (id) => {
                                             "
                                             class="btn btn-sm btn-info"
                                         >
-                                            Download <ArrowDownOnSquareIcon class="w-4 h-4" />
+                                            Download
+                                            <ArrowDownOnSquareIcon
+                                                class="w-4 h-4"
+                                            />
                                         </button>
                                         &nbsp;
                                         <button
@@ -224,7 +244,8 @@ const destroy = (id) => {
                                             onclick="modalUbah.showModal()"
                                             class="btn btn-sm btn-warning"
                                         >
-                                            Ubah <PencilSquareIcon class="w-4 h-4" />
+                                            Ubah
+                                            <PencilSquareIcon class="w-4 h-4" />
                                         </button>
                                         &nbsp;
                                         <button

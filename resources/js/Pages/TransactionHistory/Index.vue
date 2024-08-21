@@ -1,18 +1,19 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm, Link } from "@inertiajs/vue3";
-import { FunnelIcon, PrinterIcon } from '@heroicons/vue/24/outline'
+import { Head, useForm, Link, router } from "@inertiajs/vue3";
+import { FunnelIcon, PrinterIcon } from "@heroicons/vue/24/outline";
 import moment from "moment";
 import axios from "axios";
 import { ref } from "vue";
 
 const props = defineProps({
     histories: Object,
+    params: Object,
 });
 
 const formFilter = useForm({
-    from_date: "",
-    until_date: "",
+    from_date: props.params.from_date ?? "",
+    until_date: props.params.until_date ?? "",
 });
 
 const detail_transactions = ref([]);
@@ -20,14 +21,14 @@ const modalDetail = ref(false);
 const loading = ref(false);
 
 const printTransaction = () => {
-    if(formFilter.from_date == "" || formFilter.until_date == ""){
-        alert("Harap isi tanggal terlebih dahulu")
-    }else{
-        formFilter.get(route('transaction.print'),{
-            preserveState: true, 
-        })
+    if (formFilter.from_date == "" || formFilter.until_date == "") {
+        alert("Harap isi tanggal terlebih dahulu");
+    } else {
+        formFilter.get(route("transaction.print"), {
+            preserveState: true,
+        });
     }
-}
+};
 
 const calculateTotal = (transactions) => {
     return transactions.reduce((acc, item) => {
@@ -58,6 +59,13 @@ const getDetailTransaction = (id) => {
             loading.value = false;
         });
 };
+
+const filter = () => {
+    formFilter.get(route("transaction.history"), {
+        preserveScroll: true,
+        only: ["histories"],
+    });
+};
 </script>
 
 <template>
@@ -80,28 +88,36 @@ const getDetailTransaction = (id) => {
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <div class="flex justify-between">
                             <form @submit.prevent="filter">
-                            <div class="join">
-                                <input
-                                    type="date"
-                                    v-model.lazy="formFilter.from_date"
-                                    class="input input-bordered join-item"
-                                />
+                                <div class="join">
+                                    <input
+                                        type="date"
+                                        v-model.lazy="formFilter.from_date"
+                                        class="input input-bordered join-item"
+                                    />
 
-                                <input
-                                    type="date"
-                                    v-model.lazy="formFilter.until_date"
-                                    class="input input-bordered join-item"
-                                />
-                                <button
-                                    :disabled="formFilter.processing"
-                                    type="submit"
-                                    class="btn join-item rounded-r-full"
-                                >
-                                    Filter <FunnelIcon class="w-4 h-4" />
-                                </button>
-                            </div>
-                        </form>
-                        <a target="_blank" :href="route('transaction.print')+`?from_date=${formFilter.from_date}&until_date=${formFilter.until_date}`"  class="btn btn-sm btn-success">Print <PrinterIcon class="w-4 h-4" /></a>
+                                    <input
+                                        type="date"
+                                        v-model.lazy="formFilter.until_date"
+                                        class="input input-bordered join-item"
+                                    />
+                                    <button
+                                        :disabled="formFilter.processing"
+                                        type="submit"
+                                        class="btn join-item rounded-r-full"
+                                    >
+                                        Filter <FunnelIcon class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </form>
+                            <a
+                                target="_blank"
+                                :href="
+                                    route('transaction.print') +
+                                    `?from_date=${formFilter.from_date}&until_date=${formFilter.until_date}`
+                                "
+                                class="btn btn-sm btn-success"
+                                >Print <PrinterIcon class="w-4 h-4"
+                            /></a>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="table">

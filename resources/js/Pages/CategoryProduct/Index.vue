@@ -1,7 +1,11 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, usePage } from "@inertiajs/vue3";
-import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import {
+    PlusIcon,
+    PencilSquareIcon,
+    TrashIcon,
+} from "@heroicons/vue/24/outline";
 import { ref, inject } from "vue";
 
 const swal = inject("$swal");
@@ -141,7 +145,8 @@ const destroy = (id) => {
                                             onclick="modalUbah.showModal()"
                                             class="btn btn-sm btn-warning"
                                         >
-                                            Ubah <PencilSquareIcon class="w-4 h-4" />
+                                            Ubah
+                                            <PencilSquareIcon class="w-4 h-4" />
                                         </button>
                                         <button
                                             @click="destroy(item.id)"

@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { ref, inject } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
-import { PlusIcon, CreditCardIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, CreditCardIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
     products: Object,

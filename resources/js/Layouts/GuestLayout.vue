@@ -10,7 +10,7 @@ import { Link } from "@inertiajs/vue3";
         <div>
             <Link href="/">
                 <!-- <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" /> -->
-                <img src="/assets/logo/logo.webp" class="w-20">
+                <img src="/assets/logo/logo.webp" class="w-20" />
             </Link>
         </div>
         <div>
