@@ -11,7 +11,23 @@ const props = defineProps({
     product: Number,
     product_empty: Number,
     transaction: Number,
+    monthly_transaction: Object,
 });
+
+const options = {
+    chart: {
+        id: "vuechart-example",
+    },
+    xaxis: {
+        categories: props.monthly_transaction.map((item) => item.month),
+    },
+};
+const series = [
+    {
+        name: "series-1",
+        data: props.monthly_transaction.map((item) => item.count),
+    },
+];
 </script>
 
 <template>
@@ -65,6 +81,20 @@ const props = defineProps({
                                 <div class="stat-value">
                                     {{ props.transaction }}
                                 </div>
+                            </div>
+                        </div>
+                        <div
+                            class="card bg-base-100 shadow-xl mx-auto mt-5"
+                            style="width: 600px"
+                        >
+                            <div class="card-body">
+                                <apexchart
+                                    width="500"
+                                    class="mx-auto"
+                                    type="bar"
+                                    :options="options"
+                                    :series="series"
+                                ></apexchart>
                             </div>
                         </div>
                     </div>

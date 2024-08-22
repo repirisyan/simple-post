@@ -16,36 +16,38 @@ class TransactionController extends Controller
 
     public function __construct()
     {
-        $this->product = new Product();
+        $this->product = new Product;
     }
 
-    public function index(){
-        return Inertia::render('Transaction/Index',[
-            'products' => $this->product->getListProduct()
+    public function index()
+    {
+        return Inertia::render('Transaction/Index', [
+            'products' => $this->product->getListProduct(),
         ]);
     }
 
     public function searchProduct(Request $request)
     {
         $request->validate([
-            'product_code' => 'required|exists:products,product_code'
+            'product_code' => 'required|exists:products,product_code',
         ]);
         try {
-            return response()->json(Product::where('product_code',$request->product_code)->first());
+            return response()->json(Product::where('product_code', $request->product_code)->first());
         } catch (Exception $e) {
             return response()->json(404);
         }
     }
 
-    public function pay(Request $request){
+    public function pay(Request $request)
+    {
         try {
-            $invoice = 'INV'.date("ymdhis");
-            DB::transaction(function() use ($request,$invoice){
+            $invoice = 'INV'.date('ymdhis');
+            DB::transaction(function () use ($request, $invoice) {
                 $id = Transaction::create([
                     'invoice' => $invoice,
                     'user_id' => auth()->user()->id,
                     'grand_total' => $request[2],
-                    'grand_pay' => $request[1]
+                    'grand_pay' => $request[1],
                 ])->id;
                 foreach ($request[0] as $item) {
                     DetailTransaction::create([
@@ -53,17 +55,16 @@ class TransactionController extends Controller
                         'transaction_id' => $id,
                         'qty' => $item['qty'],
                         'buying_price' => $item['buying_price'],
-                        'price' => $item['price']
+                        'price' => $item['price'],
                     ]);
-                    Product::where('id',$item['id'])->decrement('qty',$item['qty']);
+                    Product::where('id', $item['id'])->decrement('qty', $item['qty']);
                 }
             });
-            return response()->json(['success','Pembayaran berhasil']);
+
+            return response()->json(['success', 'Pembayaran berhasil']);
         } catch (Exception $e) {
-            return response()->json(['error','Terjadi kesalahan saat melakukan pembayaran']);
+            return response()->json(['error', 'Terjadi kesalahan saat melakukan pembayaran']);
 
         }
     }
-
-
 }

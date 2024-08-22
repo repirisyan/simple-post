@@ -11,31 +11,38 @@ class Product extends Model
 
     protected $guarded = ['id'];
 
-    public function category_product(){
+    public function category_product()
+    {
         return $this->belongsTo(CategoryProduct::class);
     }
 
-    public function getAllProduct(){
+    public function getAllProduct()
+    {
         return $this->with('category_product')->simplePaginate(10);
     }
 
-    public function getListProduct(){
-        return $this->without('category_product')->select('id','nama')->get();
+    public function getListProduct()
+    {
+        return $this->without('category_product')->select('id', 'nama')->get();
     }
 
-    public function storeProduct($data){
+    public function storeProduct($data)
+    {
         return $this->create($data);
     }
 
-    public function getProduct($id){
-        return $this->with('category_product')->where('id',$id)->first();
+    public function getProduct($id)
+    {
+        return $this->with('category_product')->where('id', $id)->first();
     }
 
-    public function updateProduct($id,$data){
+    public function updateProduct($id, $data)
+    {
         return $this->find($id)->update($data);
     }
 
-    public function destroyProduct($id){
+    public function destroyProduct($id)
+    {
         return $this->destroy($id);
     }
 }

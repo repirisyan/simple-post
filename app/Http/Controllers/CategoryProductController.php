@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoryProductRequest;
 use App\Models\CategoryProduct;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CategoryProductController extends Controller
@@ -15,14 +14,15 @@ class CategoryProductController extends Controller
      */
     private $category_product;
 
-    public function __construct(){
-        $this->category_product = new CategoryProduct();
+    public function __construct()
+    {
+        $this->category_product = new CategoryProduct;
     }
 
     public function index()
     {
-        return Inertia::render('CategoryProduct/Index',[
-            'data' => $this->category_product->getAllCategory()
+        return Inertia::render('CategoryProduct/Index', [
+            'data' => $this->category_product->getAllCategory(),
         ]);
     }
 
@@ -33,12 +33,13 @@ class CategoryProductController extends Controller
     {
         try {
             $this->category_product->storeCategory($request->validated());
-            return to_route('category-product.index')->with('message',[
-                'success','Data berhasil disimpan'
+
+            return to_route('category-product.index')->with('message', [
+                'success', 'Data berhasil disimpan',
             ]);
         } catch (Exception $e) {
-            return to_route('category-product.index')->with('message',[
-                'error','Terjadi kesalahan saat menyimpan data'
+            return to_route('category-product.index')->with('message', [
+                'error', 'Terjadi kesalahan saat menyimpan data',
             ]);
         }
     }
@@ -61,13 +62,14 @@ class CategoryProductController extends Controller
     public function update(CategoryProductRequest $request, string $id)
     {
         try {
-            $this->category_product->updateCategory($id,$request->validated());
-            return to_route('category-product.index')->with('message',[
-                'success','Data berhasil diubah'
+            $this->category_product->updateCategory($id, $request->validated());
+
+            return to_route('category-product.index')->with('message', [
+                'success', 'Data berhasil diubah',
             ]);
         } catch (Exception $e) {
-            return to_route('category-product.index')->with('message',[
-                'error','Terjadi kesalahan saat mengubah data'
+            return to_route('category-product.index')->with('message', [
+                'error', 'Terjadi kesalahan saat mengubah data',
             ]);
         }
     }
@@ -79,9 +81,10 @@ class CategoryProductController extends Controller
     {
         try {
             $this->category_product->destroyCategory($id);
-            return to_route('category-product.index')->with('message',['success','Data berhasil dihapus']);
+
+            return to_route('category-product.index')->with('message', ['success', 'Data berhasil dihapus']);
         } catch (Exception $e) {
-            return to_route('category-product.index')->with('message',['error','Terjadi kesalahan saat menghapus data']);
+            return to_route('category-product.index')->with('message', ['error', 'Terjadi kesalahan saat menghapus data']);
         }
     }
 }

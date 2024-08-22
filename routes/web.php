@@ -30,30 +30,28 @@ use Inertia\Inertia;
 //     ]);
 // });
 
-Route::redirect('/','login');
+Route::redirect('/', 'login');
 
-Route::get('product-link/{id}',[ProductController::class,'productLink'])->name('product.link');
+Route::get('product-link/{id}', [ProductController::class, 'productLink'])->name('product.link');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('category-product',CategoryProductController::class)->except(['create','show']);
+    Route::resource('category-product', CategoryProductController::class)->except(['create', 'show']);
 
-    Route::resource('product',ProductController::class)->except(['create','show']);
+    Route::resource('product', ProductController::class)->except(['create', 'show']);
 
-    Route::get('transaction',[TransactionController::class,'index'])->name('transaction.index');
-    Route::post('transaction/search-product',[TransactionController::class,'searchProduct'])->name('transaction.search_product');
-    Route::post('transaction/pay',[TransactionController::class,'pay'])->name('transaction.pay');
+    Route::get('transaction', [TransactionController::class, 'index'])->name('transaction.index');
+    Route::post('transaction/search-product', [TransactionController::class, 'searchProduct'])->name('transaction.search_product');
+    Route::post('transaction/pay', [TransactionController::class, 'pay'])->name('transaction.pay');
 
-
-
-    Route::get('transaction/history',[TransactionHistoryController::class,'index'])->name('transaction.history');
-    Route::get('transaction/print',[TransactionHistoryController::class,'print'])->name('transaction.print');
-    Route::get('transaction-detail/{transaction_id}',[TransactionHistoryController::class,'transactionDetail'])->name('transaction.detail');
+    Route::get('transaction/history', [TransactionHistoryController::class, 'index'])->name('transaction.history');
+    Route::get('transaction/print', [TransactionHistoryController::class, 'print'])->name('transaction.print');
+    Route::get('transaction-detail/{transaction_id}', [TransactionHistoryController::class, 'transactionDetail'])->name('transaction.detail');
 
 });
 
