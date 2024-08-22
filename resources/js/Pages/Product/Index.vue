@@ -427,7 +427,7 @@ const destroy = (id) => {
                             </label>
                             <input
                                 type="number"
-                                min="0"
+                                :min="form.buying_price"
                                 required
                                 v-model.lazy="form.selling_price"
                                 placeholder="Type here"
@@ -616,7 +616,7 @@ const destroy = (id) => {
                             </label>
                             <input
                                 type="number"
-                                min="0"
+                                :min="form.buying_price"
                                 required
                                 v-model.lazy="form.selling_price"
                                 placeholder="Type here"
