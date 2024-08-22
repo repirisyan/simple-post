@@ -10,7 +10,7 @@ const props = defineProps({
     histories: Object,
     params: Object,
 });
-
+console.log(props.params)
 const formFilter = useForm({
     from_date: props.params.from_date ?? "",
     until_date: props.params.until_date ?? "",
@@ -63,7 +63,7 @@ const getDetailTransaction = (id) => {
 const filter = () => {
     formFilter.get(route("transaction.history"), {
         preserveScroll: true,
-        only: ["histories"],
+        only: ["histories","params"],
     });
 };
 </script>
