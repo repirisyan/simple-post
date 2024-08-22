@@ -6,6 +6,7 @@ import {
     ArchiveBoxXMarkIcon,
     CurrencyDollarIcon,
 } from "@heroicons/vue/24/outline";
+import moment from "moment"
 
 const props = defineProps({
     product: Number,
@@ -87,6 +88,7 @@ const series = [
                             class="card bg-base-100 shadow-xl mx-auto mt-5"
                             style="width: 600px"
                         >
+                            <h2 class="card-title mx-auto mt-3">Transaksi {{moment().format('YYYY')}}</h2>
                             <div class="card-body">
                                 <apexchart
                                     width="500"
