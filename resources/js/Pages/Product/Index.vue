@@ -163,8 +163,8 @@ const destroy = (id) => {
                                     <th>Qty</th>
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
-                                    <th>QR</th>
                                     <th>QR Link</th>
+                                    <th>QR</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
